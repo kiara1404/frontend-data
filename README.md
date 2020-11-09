@@ -1,5 +1,5 @@
 ### **Beschrijving** 
-Deze repository is gemaakt voor het vak Functional Programming van de opleiding CMD aan de Hogeschool van Amsterdam. 
+Deze repository is gemaakt voor het vak Frontend Data van de opleiding CMD aan de Hogeschool van Amsterdam. 
 Ik heb als opdracht gekregen om voor de Volkskrant interessante invalshoeken/onderzoeksvragen te vinden over `de auto in de stad` zodat de journalisten hier relevante artikelen over kunnen schrijven . Hiervoor heb ik verschillende datasets van het RDW aangeleverd gekregen. Samen met mijn mede-studenten zijn wij door deze data heen gegaan. Voor meer informatie over de opdracht of opdrachtgever, bezoek mijn wiki pages, [Debriefing](https://github.com/kiara1404/functional-programming/wiki/Debriefing)
 
 ### **Onderzoeksvraag**   
@@ -18,7 +18,7 @@ Voor de opdracht van de Volkskrant heb ik gebruik gemaakt van RDW parkeerdataset
 ### Installatie    
 Open de terminal op je computer en voer het volgende in:
 
-```git clone https://github.com/kiara1404/functional-programming```    
+```git clone https://github.com/kiara1404/frontend-data```    
 
 ### Credits en license (bronnen (MIT licence))
 De licentie voor deze repository is `MIT License`. 
