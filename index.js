@@ -10,14 +10,20 @@ getData(endpoint)
     .then(data => {
         // er wordt door de dataset geloopt en alle betaalmogelijkheden komen in de console log doordat de filterfunctie wordt aangeroepen
         const paymentMethodArray = filterData(data, selectedColumn);
-        const cleanCreditcardData = cleanCreditcard(paymentMethodArray)
-        console.log(cleanCreditcardData)
+        const cleanCreditcardData = cleanCreditcard(paymentMethodArray);
+        console.log(cleanCreditcardData);
         // hier wordt uiteindelijk de data in de column omgezet naar lowercase
-        const toLowerCaseData = allDataToLowerCase(data, selectedColumn)
-        console.log(toLowerCaseData)
+        const toLowerCaseData = allDataToLowerCase(data, selectedColumn);
         // hier wordt de functie die naar unieke waardes zoekt aangeroepen en de unieke waardes komen in de console
-        const uniquePaymentValues = uniqueValues(toLowerCaseData)
-        console.log(uniquePaymentValues)
+        const uniquePaymentValues = uniqueValues(toLowerCaseData);
+        const cleanPinData = cleanPin(toLowerCaseData);
+        const cleanChipKnipData = cleanChip(toLowerCaseData);
+        console.log(cleanChipKnipData);
+        const cleanCashData = cleanCash(toLowerCaseData);
+        console.log(cleanCashData);
+        const cleanRemainingData = cleanEverythingElse(toLowerCaseData);
+        console.log(cleanRemainingData);
+ 
     })
 
 async function getData(url){
@@ -38,9 +44,9 @@ function uniqueValues(dataArray){
     dataArray.map(item => {
         if (uniqueArray.indexOf(item) == -1) {
             uniqueArray.push(item);
-        }
+        };
     })
-return uniqueArray
+return uniqueArray;
 }
 
 
@@ -65,7 +71,11 @@ function cleanCreditcard(dataArray){
             cleanedCreditcardArray.push(item);
         }
         //kijkt welke antwoorden diners club bevat en vervangt dedze met creditcard
-        if (item.includes('diners club')) {
+        else if (item.includes('diners club')) {
+            item = 'creditcard';
+            cleanedCreditcardArray.push(item);
+        }
+        else if (item.includes('amex')) {
             item = 'creditcard';
             cleanedCreditcardArray.push(item);
         }
@@ -74,9 +84,78 @@ function cleanCreditcard(dataArray){
             cleanedCreditcardArray.push(item)
         }
     })
-return cleanedCreditcardArray
+return cleanedCreditcardArray;
 }    
 
+function cleanPin(dataArray) {
+    let cleanPinArray = [];
 
+    dataArray.forEach(item => {
+        if (item.includes('vpay')) {
+            item = 'pin';
+            cleanPinArray.push(item);
+        }
+        else if (item.includes('maestro')) {
+            item = 'pin';
+            cleanPinArray.push(item)
+        }
+        else {
+            cleanPinArray.push(item);
+        }
+    })
+return cleanPinArray;
+}
 
+function cleanChip(dataArray) {
+    let cleanChipArray = [];
 
+    dataArray.forEach(item => {
+        if (item.includes('chip')) {
+            item = 'chipknip';
+            cleanChipArray.push(item);
+        }
+
+        else {
+            cleanChipArray.push(item);
+        }
+    })
+return cleanChipArray;
+}
+
+function cleanCash(dataArray) {
+    let cleanCashArray = [];
+
+    dataArray.forEach(item => {
+        if (item.includes('banknotes')) {
+            item = 'cash';
+            cleanCashArray.push(item);
+        }
+        else if (item.includes('coins')) {
+            item = 'cash';
+            cleanCashArray.push(item);
+        }
+        else {
+            cleanCashArray.push(item);
+        }
+    })
+return cleanCashArray;
+}
+
+function cleanEverythingElse(dataArray) {
+    let cleanArray = [];
+
+    dataArray.forEach(item => {
+        if (item.includes('dip & go')) {
+            item = 'dip-tap&go';
+            cleanArray.push(item);
+        }
+        else if (item.includes('xximio')) {
+            item = 'XXImo parkeerpas';
+            cleanArray.push(item);
+        }
+        else {
+            cleanArray.push(item);
+        }
+    })
+return cleanArray;
+}
