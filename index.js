@@ -10,18 +10,19 @@ getData(endpoint)
     .then(data => {
         // er wordt door de dataset geloopt en alle betaalmogelijkheden komen in de console log doordat de filterfunctie wordt aangeroepen
         const paymentMethodArray = filterData(data, selectedColumn);
-        const cleanCreditcardData = cleanCreditcard(paymentMethodArray);
-        console.log(cleanCreditcardData);
         // hier wordt uiteindelijk de data in de column omgezet naar lowercase
-        const toLowerCaseData = allDataToLowerCase(data, selectedColumn);
+        const toLowerCaseData = allDataToLowerCase(paymentMethodArray);
+        const cleanCreditcardData = cleanCreditcard(toLowerCaseData);
+        console.log(cleanCreditcardData);
         // hier wordt de functie die naar unieke waardes zoekt aangeroepen en de unieke waardes komen in de console
         const uniquePaymentValues = uniqueValues(toLowerCaseData);
-        const cleanPinData = cleanPin(toLowerCaseData);
-        const cleanChipKnipData = cleanChip(toLowerCaseData);
-        console.log(cleanChipKnipData);
-        const cleanCashData = cleanCash(toLowerCaseData);
-        console.log(cleanCashData);
-        const cleanRemainingData = cleanEverythingElse(toLowerCaseData);
+        const cleanPinData = cleanPin(cleanCreditcardData);
+        console.log(cleanPinData)
+        const cleanChipKnipData = cleanChip(cleanPinData);
+      //  console.log(cleanChipKnipData);
+        const cleanCashData = cleanCash(cleanChipKnipData);
+      //  console.log(cleanCashData);
+        const cleanRemainingData = cleanEverythingElse(cleanCashData);
         console.log(cleanRemainingData);
  
     })
@@ -51,8 +52,8 @@ return uniqueArray;
 
 
 // returns alle gegevens in kleine letters, dat is netter!
-function allDataToLowerCase(dataArray, column) {
-    return dataArray.map(item => item[column].toLowerCase())
+function allDataToLowerCase(dataArray) {
+    return dataArray.map(item => item.toLowerCase())
 }
 
 // returns Visa, Mastercard etc. als creditcard
