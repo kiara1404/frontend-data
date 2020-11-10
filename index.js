@@ -10,12 +10,14 @@ getData(endpoint)
     .then(data => {
         // er wordt door de dataset geloopt en alle betaalmogelijkheden komen in de console log doordat de filterfunctie wordt aangeroepen
         const paymentMethodArray = filterData(data, selectedColumn);
-        console.log(paymentMethodArray);
+        const cleanCreditcardData = cleanCreditcard(paymentMethodArray)
+        console.log(cleanCreditcardData)
+        // hier wordt uiteindelijk de data in de column omgezet naar lowercase
+        const toLowerCaseData = allDataToLowerCase(data, selectedColumn)
+        console.log(toLowerCaseData)
         // hier wordt de functie die naar unieke waardes zoekt aangeroepen en de unieke waardes komen in de console
-        const uniquePaymentValues = uniqueValues(paymentMethodArray)
+        const uniquePaymentValues = uniqueValues(toLowerCaseData)
         console.log(uniquePaymentValues)
-        const toLowerCase = allDataToLowerCase(data, selectedColumn)
-        console.log(toLowerCase)
     })
 
 async function getData(url){
@@ -41,20 +43,40 @@ function uniqueValues(dataArray){
 return uniqueArray
 }
 
-function countValues(valueArray, specificValue) {
-    let count = 0
-    valueArray.forEach(item => {
-        if (item == specificValue){
-            count ++
-        }
-    })
-    return count
-}
 
 // returns alle gegevens in kleine letters, dat is netter!
 function allDataToLowerCase(dataArray, column) {
-    return dataArray.map(item =>
-        item[column].toLowerCase())
+    return dataArray.map(item => item[column].toLowerCase())
 }
+
+// returns Visa, Mastercard etc. als creditcard
+function cleanCreditcard(dataArray){
+    // lege array
+    let cleanedCreditcardArray = [];
+    //kijkt welke antwoorden visa bevat en vervangt dedze met creditcard
+    dataArray.forEach(item => {
+        if (item.includes('visa')) {
+            item = 'creditcard';
+            cleanedCreditcardArray.push(item);
+        }
+        //kijkt welke antwoorden mastercard bevat en vervangt dedze met creditcard
+        else if (item.includes('mastercard')) {
+            item = 'creditcard';
+            cleanedCreditcardArray.push(item);
+        }
+        //kijkt welke antwoorden diners club bevat en vervangt dedze met creditcard
+        if (item.includes('diners club')) {
+            item = 'creditcard';
+            cleanedCreditcardArray.push(item);
+        }
+        // de rest van de gegevens moeten ook in de nieuwe array meegenomen worden.
+        else {
+            cleanedCreditcardArray.push(item)
+        }
+    })
+return cleanedCreditcardArray
+}    
+
+
 
 
