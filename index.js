@@ -1,37 +1,53 @@
 console.log('are we connected?')
 // Alle onderstaande code is gemaakt met behulp van de live coding van Laurens -> 'Live coding API' van 27-10-2020
 
-// Fetching data van DRW
-const endpoint = 'https://opendata.rdw.nl/resource/r3rs-ibz5.json'; // link naar de dataset
-const selectedColumn = 'paymentmethod';
+// Fetching data van RDW
+//link naar de datasets
+const endpoints = [
+        'https://opendata.rdw.nl/resource/r3rs-ibz5.json',
+        'https://opendata.rdw.nl/resource/2uc2-nnv3.json',
 
 
-getData(endpoint)
-    .then(data => {
+]; 
+const selectedColumns = ['paymentmethod', 'areamanagerid', 'capacity', 'chargingpointcapacity'];
+
+
+getData(endpoints)
+    .then(data => returnToJSON(data))
+    .then(data => { 
+        const mergedData = mergDataTogether(data);
         // er wordt door de dataset geloopt en alle betaalmogelijkheden komen in de console log doordat de filterfunctie wordt aangeroepen
-        const paymentMethodArray = filterData(data, selectedColumn);
+        const paymentMethodArray = filterData(data[0], selectedColumns[0]);
+        console.log(paymentMethodArray)
         // hier wordt uiteindelijk de data in de column omgezet naar lowercase
         const toLowerCaseData = allDataToLowerCase(paymentMethodArray);
+        console.log(toLowerCaseData)
         const cleanCreditcardData = cleanCreditcard(toLowerCaseData);
-        console.log(cleanCreditcardData);
-        // hier wordt de functie die naar unieke waardes zoekt aangeroepen en de unieke waardes komen in de console
-        const uniquePaymentValues = uniqueValues(toLowerCaseData);
+        // hier wordt de functie die naar unieke waardes zoekt aangeroepen
+        const uniquePaymentValues = uniqueValues(mergedData);
         const cleanPinData = cleanPin(cleanCreditcardData);
-        console.log(cleanPinData)
         const cleanChipKnipData = cleanChip(cleanPinData);
-      //  console.log(cleanChipKnipData);
         const cleanCashData = cleanCash(cleanChipKnipData);
-      //  console.log(cleanCashData);
         const cleanRemainingData = cleanEverythingElse(cleanCashData);
-        console.log(cleanRemainingData);
- 
+        console.log(cleanRemainingData); 
+    
+
+
     })
 
-async function getData(url){
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-}
+
+//returns de urls met een promise.all, zorgt ervoor dat het wordt uitgevoerd wanneer alle urls zijn opgehaald
+// Hulp gekregen van Roeland van Stee en Vincent van Leeuwen
+function getData(urls) {
+    const datasets = urls.map(url => fetch(url));
+    return Promise.all(datasets);
+};
+
+// Hulp gekregen van Roeland van Stee en Vincent van Leeuwen
+function returnToJSON(response) {
+     return Promise.all(response.map(response => response.json()))
+};
+
 // functie voor het filteren van de data
 function filterData(dataArray, column) {
     return dataArray.map(item => item[column])
@@ -49,7 +65,6 @@ function uniqueValues(dataArray){
     })
 return uniqueArray;
 }
-
 
 // returns alle gegevens in kleine letters, dat is netter!
 function allDataToLowerCase(dataArray) {
@@ -160,3 +175,22 @@ function cleanEverythingElse(dataArray) {
     })
 return cleanArray;
 }
+
+// mergt de datasets met elkaar
+function mergDataTogether(dataArray) {
+    // de datasets die we in elkaar gaan voegen
+    const payments = dataArray[0]; //
+    const areamanagers = dataArray[1];
+    // er wordt over de payments dataset geloopt en vergelijkt areamanagerid's met elkaar en wanneer
+    //deze overeen komen wordt de areamanager id van areamanagers in de payments dataset 'gezet'
+    const result = payments.map(payment => {
+        const areamanager = areamanagers.find(areamanager => 
+            payment.areamanagerid === areamanager.areamanagerid
+        );
+        payment.areamanager = areamanager;
+        return payment
+    })
+    console.log(result)
+}
+
+
