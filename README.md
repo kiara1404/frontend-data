@@ -6,7 +6,20 @@ Check voor meer informatie de repository van [CMD Tech Track](https://github.com
 
 
 # **Installatie**
+Open je terminal en clone de link van mijn repo:
+```
+https://github.com/kiara1404/frontend-data
+```
 
+typ onderstaand command:
+```
+npm install
+```
+
+Om gebruik te kunnen maken van rollup, moet je onderstaande command in je terminal invoeren
+```
+npm run build
+```
 
 # **Licentie**
 Auteur: Kiara Broekhuizen [MIT License](https://github.com/kiara1404/frontend-data/blob/main/LICENSE)
