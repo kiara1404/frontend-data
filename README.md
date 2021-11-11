@@ -16,10 +16,11 @@ typ onderstaand command:
 npm install
 ```
 
-Om gebruik te kunnen maken van rollup, moet je onderstaande command in je terminal invoeren
+Om gebruik te kunnen maken van rollup en http-server, moet je onderstaande command in je terminal invoeren
 ```
 npm run build
 ```
+Bovenstaande command moet elke keer na een aanpassing in de code opnieuw gegeven worden, anders wordt krijg je niet de meest recente code in de browser.
 
 # **Licentie**
 Auteur: Kiara Broekhuizen [MIT License](https://github.com/kiara1404/frontend-data/blob/main/LICENSE)
