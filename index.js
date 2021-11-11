@@ -1,7 +1,7 @@
 import { select, csv, scaleLinear, max, scaleBand, axisLeft, axisBottom, extent } from 'd3';
 
 
-const svg = d3.select('body').append('svg');
+const svg = select('body').append('svg');
 
 svg.attr('width', 900)
     .attr('height', 600)
@@ -20,11 +20,11 @@ const render = data => {
     const innerHeight = height - margin.top - margin.bottom;
 
 
-    const xScale = d3.scaleLinear()
-        .domain([0, d3.max(data, xValue)])
+    const xScale = scaleLinear()
+        .domain([0, max(data, xValue)])
         .range([0, innerWidth]);
 
-    const yScale = d3.scaleBand()
+    const yScale = scaleBand()
         .domain(data.map(yValue))
         .range([0, innerHeight])
         .padding(0.2);
@@ -34,8 +34,8 @@ const render = data => {
             `translate(${margin.left}, ${margin.top})`
         );
 
-    g.append('g').call(d3.axisLeft(yScale));
-    g.append('g').call(d3.axisBottom(xScale))
+    g.append('g').call(axisLeft(yScale));
+    g.append('g').call(axisBottom(xScale))
         .attr('transform', `translate(0,${innerHeight})`);
 
     g.selectAll('rect').data(data)
@@ -48,7 +48,7 @@ const render = data => {
 
 };
 
-d3.csv('data.csv').then(data => {
+csv('data.csv').then(data => {
     data.forEach(d => {
         d.population = +d.population * 1000;
     });
