@@ -1,16 +1,22 @@
-(function (d3) {
+(function () {
     'use strict';
 
-    var svg = d3.select('svg');
+    var svg = d3.select('body').append('svg');
 
-    var width = +svg.attr('width');
-    var height = +svg.attr('height');
+    svg.attr('width', 900)
+        .attr('height', 600);
+    // const svg = d3.select('svg');
+
+    var width = svg.attr('width');
+    console.log(width);
+    var height = svg.attr('height');
 
     var render = function (data) {
         var xValue = function (d) { return d.population; };
         var yValue = function (d) { return d.country; };
         var margin = { top: 20, right: 20, bottom: 20, left: 100 };
         var innerWidth = width - margin.left - margin.right;
+        console.log(innerWidth);
         var innerHeight = height - margin.top - margin.bottom;
 
 
@@ -34,9 +40,11 @@
 
         g.selectAll('rect').data(data)
             .enter().append('rect')
+            .style('fill', "rgb(102, 102, 255)")
             .attr('y', function (d) { return yScale(yValue(d)); })
             .attr('width', function (d) { return xScale(xValue(d)); })
             .attr('height', yScale.bandwidth());
+
 
     };
 
@@ -47,5 +55,5 @@
         render(data);
     });
 
-})(d3);
+})();
 //# sourceMappingURL=bundle.js.map
