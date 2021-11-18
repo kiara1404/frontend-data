@@ -16,10 +16,10 @@ const selectedColumns = ['paymentmethod'];
 getData(endpoints)
     .then(data => returnToJSON(data))
     .then(data => {
-    
+
         // er wordt door de dataset geloopt en alle betaalmogelijkheden komen in de console log doordat de filterfunctie wordt aangeroepen
         const paymentMethodArray = filterData(data[0], selectedColumns[0]);
-        console.log(paymentMethodArray)
+        //console.log(paymentMethodArray)
         // hier wordt uiteindelijk de data in de column omgezet naar lowercase
         const toLowerCaseData = allDataToLowerCase(paymentMethodArray);
         const cleanCreditcardData = cleanCreditcard(toLowerCaseData);
@@ -29,11 +29,15 @@ getData(endpoints)
         const cleanChipKnipData = cleanChip(cleanPinData);
         const cleanCashData = cleanCash(cleanChipKnipData);
         const cleanRemainingData = cleanEverythingElse(cleanCashData);
-        console.log(cleanRemainingData);
-
-
-
+        
+        // dit stuk code heb ik overgenomen van stackoverflow: https://stackoverflow.com/questions/5667888/counting-the-occurrences-frequency-of-array-elements
+        const countedData = cleanRemainingData.reduce(function (acc, curr) {
+            return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+        }, {});
+        console.log(countedData)
     })
+
+
 
 
 //returns de urls met een promise.all, zorgt ervoor dat het wordt uitgevoerd wanneer alle urls zijn opgehaald
@@ -176,6 +180,8 @@ function cleanEverythingElse(dataArray) {
     })
     return cleanArray;
 }
+
+
 // --- EINDE CLEANEN DATA ---
 
 // --- BEGIN d3 ---
