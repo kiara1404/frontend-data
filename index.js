@@ -167,40 +167,44 @@ function cleanEverythingElse(dataArray) {
     })
     return cleanArray;
 }
+
+//stack overflow
 function countedValues(dataArray) {
-    dataArray.reduce(function (acc, curr) {
-        return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
-    }, {});
-    console.log(dataArray)
+    let result = {};
+    for (let i = 0; i < dataArray.length; ++i) {
+        if (!result[dataArray[i]])
+            result[dataArray[i]] = 0;
+        ++result[dataArray[i]];
+    }
+    console.log(result)
 }
 
-//countedValues(selectedColumns)
+
 
 
 // --- EINDE CLEANEN DATA ---
 
 // --- BEGIN d3 ---
-const dataSet = getData(endpoints)
-// maak svg aan
-const svg = d3.select('body').append('svg');
 
-svg
-    .attr('width', 900)
-    .attr('height', 600);
+function render(data) {
+    // maak svg aan
+    const svg = d3.select('body').append('svg');
 
-const width = svg.attr('width');
-const height = svg.attr('height');
+    svg
+        .attr('width', 900)
+        .attr('height', 600);
 
-const render = data => {
-    console.log(dataSet)
-    const xScale = d3.scaleLinear()
-        .domain([0, 100])
-    //console.log(xScale.domain)
+    const width = svg.attr('width');
+    const height = svg.attr('height');
 
-    const g = svg.append('g');
+    const xValue = d => d[selectedColumn];
 
-    g.selectAll('rect').data(data)
-        .enter().append('rect')
-        .join()
+    const x = d3.scaleLinear()
+        .domain([0, d3.max(xValue)])
+        .range([0, width])
+
+    const y = d3.scaleBand()
+
+    
 }
-render(dataSet)
+
