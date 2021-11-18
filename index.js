@@ -9,41 +9,26 @@ const endpoints = [
 
 
 ];
-const selectedColumns = ['paymentmethod'];
+const selectedColumn = 'paymentmethod';
 
 // --- BEGIN CLEANEN DATA ---
 
 getData(endpoints)
-    .then(data => returnToJSON(data))
-    .then(data => {
-
-        // er wordt door de dataset geloopt en alle betaalmogelijkheden komen in de console log doordat de filterfunctie wordt aangeroepen
-        const paymentMethodArray = filterData(data[0], selectedColumns[0]);
-        //console.log(paymentMethodArray)
-        // hier wordt uiteindelijk de data in de column omgezet naar lowercase
-        const toLowerCaseData = allDataToLowerCase(paymentMethodArray);
-        const cleanCreditcardData = cleanCreditcard(toLowerCaseData);
-        // hier wordt de functie die naar unieke waardes zoekt aangeroepen
-        const uniquePaymentValues = uniqueValues(paymentMethodArray);
-        const cleanPinData = cleanPin(cleanCreditcardData);
-        const cleanChipKnipData = cleanChip(cleanPinData);
-        const cleanCashData = cleanCash(cleanChipKnipData);
-        const cleanRemainingData = cleanEverythingElse(cleanCashData);
-        
-        // dit stuk code heb ik overgenomen van stackoverflow: https://stackoverflow.com/questions/5667888/counting-the-occurrences-frequency-of-array-elements
-        const countedData = cleanRemainingData.reduce(function (acc, curr) {
-            return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
-        }, {});
-        console.log(countedData)
-    })
-
+    .then(response => returnToJSON(response))
+    .then(data => filterData(data[0], selectedColumn))
+    .then(data => allDataToLowerCase(data))
+    .then(data => cleanCreditcard(data))
+    .then(data => cleanPin(data))
+    .then(data => cleanCash(data))
+    .then(data => cleanEverythingElse(data))
+    .then(data => countedValues(data))
 
 
 
 //returns de urls met een promise.all, zorgt ervoor dat het wordt uitgevoerd wanneer alle urls zijn opgehaald
 // Hulp gekregen van Roeland van Stee en Vincent van Leeuwen
-function getData(urls) {
-    const datasets = urls.map(url => fetch(url));
+function getData(url) {
+    const datasets = url.map(url => fetch(url));
     return Promise.all(datasets);
 };
 
@@ -55,7 +40,9 @@ function returnToJSON(response) {
 
 // functie voor het filteren van de data
 function filterData(dataArray, column) {
+    console.log(dataArray)
     return dataArray.map(item => item[column])
+
 };
 
 // functie die zoekt naar unieke waardes in een array
@@ -180,8 +167,40 @@ function cleanEverythingElse(dataArray) {
     })
     return cleanArray;
 }
+function countedValues(dataArray) {
+    dataArray.reduce(function (acc, curr) {
+        return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+    }, {});
+    console.log(dataArray)
+}
+
+//countedValues(selectedColumns)
 
 
 // --- EINDE CLEANEN DATA ---
 
 // --- BEGIN d3 ---
+const dataSet = getData(endpoints)
+// maak svg aan
+const svg = d3.select('body').append('svg');
+
+svg
+    .attr('width', 900)
+    .attr('height', 600);
+
+const width = svg.attr('width');
+const height = svg.attr('height');
+
+const render = data => {
+    console.log(dataSet)
+    const xScale = d3.scaleLinear()
+        .domain([0, 100])
+    //console.log(xScale.domain)
+
+    const g = svg.append('g');
+
+    g.selectAll('rect').data(data)
+        .enter().append('rect')
+        .join()
+}
+render(dataSet)
