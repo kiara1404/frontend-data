@@ -179,32 +179,65 @@ function countedValues(dataArray) {
     console.log(result)
 }
 
-
-
-
 // --- EINDE CLEANEN DATA ---
 
 // --- BEGIN d3 ---
 
-function render(data) {
-    // maak svg aan
-    const svg = d3.select('body').append('svg');
+const svg = d3.select('body').append('svg');
+console.log('hallo')
 
-    svg
-        .attr('width', 900)
-        .attr('height', 600);
+// Geef een width en een height mee aan de SVG
+svg
+    .attr('width', 900)
+    .attr('height', 600)
 
-    const width = svg.attr('width');
-    const height = svg.attr('height');
+// sla de width en height op in een variabelen
+const width = svg.attr('width');
+const height = svg.attr('height');
 
-    const xValue = d => d[selectedColumn];
+const render = data => {
+    const xValue = d => d.quantity;
+    const yValue = d => d.paymentmethod;
 
-    const x = d3.scaleLinear()
-        .domain([0, d3.max(xValue)])
-        .range([0, width])
+    // geef margins mee zodat de chart mooi gecentreerd is
+    const margin = { top: 20, right: 20, bottom: 20, left: 100 };
+    const innerWidth = width - margin.left - margin.right;
+    console.log(innerWidth)
+    const innerHeight = height - margin.top - margin.bottom;
 
-    const y = d3.scaleBand()
+    // bepaald de grootte van de x-as en de stappen ertussen
+    const xScale = d3.scaleLinear()
+        .domain([0, d3.extent(data)])
+        .range([0, innerWidth]);
+    console.log(xScale.domain())
 
-    
-}
+    // scaleband bepaald de breedte van de bars
+    const yScale = d3.scaleBand()
+        .domain(data.map(yValue))
+        .range([0, innerHeight])
+        .padding(0.2);
+
+    // maakt een nieuwe groep aan
+    const g = svg.append('g')
+        .attr('transform',
+            `translate(${margin.left}, ${margin.top})`
+        );
+
+    // maakt nog een keer nieuwe groep aan met line en text
+    g.append('g').call(d3.axisLeft(yScale));
+    g.append('g').call(d3.axisBottom(xScale))
+        .attr('transform', `translate(0,${innerHeight})`);
+
+    g.selectAll('rect').data(data)
+        .enter().append('rect') // maakt de bars aan
+        .style('fill', "rgb(102, 102, 255)") // geeft een andere kleur aan de bars
+        .attr('y', d => yScale(yValue(d))) // plaatsing in de grafiek (waar op de y-as)
+        .attr('width', d => xScale(xValue(d))) // width van één bar
+        .attr('height', yScale.bandwidth()); // height van één bar
+
+
+};
+
+d3.json('https://opendata.rdw.nl/resource/r3rs-ibz5.json')
+    .then(data => render(data))
 
