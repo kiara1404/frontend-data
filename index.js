@@ -15,13 +15,25 @@ const selectedColumn = 'paymentmethod';
 
 getData(endpoints)
     .then(response => returnToJSON(response))
-    .then(data => filterData(data[0], selectedColumn))
-    .then(data => allDataToLowerCase(data))
-    .then(data => cleanCreditcard(data))
-    .then(data => cleanPin(data))
-    .then(data => cleanCash(data))
-    .then(data => cleanEverythingElse(data))
-    .then(data => countedValues(data))
+    .then((data) => {
+        data = filterData(data[0], selectedColumn)
+        data = allDataToLowerCase(data)
+        data = cleanCreditcard(data)
+        data = cleanPin(data)
+        data = cleanEverythingElse(data)
+        // console.log(data)
+        data = countedValues(data)
+        console.log(data)
+        data = mergeData(data)
+        return data
+    })
+// .then(data => filterData(data[0], selectedColumn))
+// .then(data => allDataToLowerCase(data))
+// .then(data => cleanCreditcard(data))
+// .then(data => cleanPin(data))
+// .then(data => cleanCash(data))
+// .then(data => cleanEverythingElse(data))
+// .then(data => console.log(countedValues(data)))
 
 
 
@@ -40,7 +52,7 @@ function returnToJSON(response) {
 
 // functie voor het filteren van de data
 function filterData(dataArray, column) {
-    console.log(dataArray)
+    console.log('fd', dataArray)
     return dataArray.map(item => item[column])
 
 };
@@ -60,6 +72,7 @@ function uniqueValues(dataArray) {
 
 // returns alle gegevens in kleine letters, dat is netter!
 function allDataToLowerCase(dataArray) {
+    // console.log('adtlc', dataArray)
     return dataArray.map(item => item.toLowerCase())
 }
 
@@ -168,16 +181,40 @@ function cleanEverythingElse(dataArray) {
     return cleanArray;
 }
 
+
 //stack overflow
 function countedValues(dataArray) {
-    let result = {};
-    for (let i = 0; i < dataArray.length; ++i) {
-        if (!result[dataArray[i]])
-            result[dataArray[i]] = 0;
-        ++result[dataArray[i]];
-    }
-    console.log(result)
+    // let result = {};
+    // for (let i = 0; i < dataArray.length; ++i) {
+    //     if (!result[dataArray[i]])
+    //         result[dataArray[i]] = 0;
+    //     ++result[dataArray[i]];
+    // }
+    // console.log('cd',result)
+    let t = dataArray.reduce(function (acc, curr) {
+        return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+    }, {});
+    // console.log(t)
+    return t
 }
+
+function mergeData(dataArray) {
+    const o = dataArray
+    
+    let p = []
+    for (const [key, value] of Object.entries(o)) {
+        p.push(
+            {
+            naam: key,
+            aantal: value
+        }
+        )
+        console.log(p)
+        return p
+    }
+}
+
+
 
 // --- EINDE CLEANEN DATA ---
 
@@ -240,4 +277,3 @@ const render = data => {
 
 d3.json('https://opendata.rdw.nl/resource/r3rs-ibz5.json')
     .then(data => render(data))
-
