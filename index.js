@@ -182,36 +182,36 @@ function cleanEverythingElse(dataArray) {
 }
 
 
-//stack overflow
+//bron: https://stackoverflow.com/questions/5667888/counting-the-occurrences-frequency-of-array-elements
+//functie om te de frequentie van waardes in een array te checken
 function countedValues(dataArray) {
-    // let result = {};
-    // for (let i = 0; i < dataArray.length; ++i) {
-    //     if (!result[dataArray[i]])
-    //         result[dataArray[i]] = 0;
-    //     ++result[dataArray[i]];
-    // }
-    // console.log('cd',result)
     let t = dataArray.reduce(function (acc, curr) {
         return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
     }, {});
-    // console.log(t)
+
     return t
 }
 
+// ik wil dat 'naam' en 'aantal' als keys in een object gepusht worden  in de nieuwe array
 function mergeData(dataArray) {
-    const o = dataArray
-    
     let p = []
-    for (const [key, value] of Object.entries(o)) {
-        p.push(
-            {
-            naam: key,
-            aantal: value
-        }
-        )
-        console.log(p)
-        return p
-    }
+    Object.keys(dataArray).forEach(function (key) {
+        // console.log(key, dataArray[key]);
+        p.push({ betaalmethode: key, hoeveelheid: dataArray[key] })
+        // return p
+    });
+    console.log(p)
+    return p
+
+    // for (const [key, value] of Object.entries(o)) {
+    //     console.log(key + value)
+    //     // p.push(
+    //     //     {
+    //     //     naam: key,
+    //     //     aantal: value
+    //     // }
+    //     // )
+    //     console.log(p)
 }
 
 
