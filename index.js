@@ -9,7 +9,7 @@ const endpoints = [
 
 
 ];
-const selectedColumn = 'paymentmethod';
+let selectedColumn = 'paymentmethod';
 
 // --- BEGIN CLEANEN DATA ---
 async function getDataSet(url) {
@@ -23,12 +23,12 @@ async function getDataSet(url) {
     }
 
 }
-getData(endpoints)
-  //  .then(data => returnToJSON(data))
-    .then(data => {
-        mergeDataTogether(data)
-        console.log(data)
-        data = filterData(data[0], selectedColumn)
+
+getDataSet(endpoints[0])
+    .then((data) => {
+        // mergeDataTogether(data)
+        // console.log(data)
+        data = filterData(data, selectedColumn)
         data = allDataToLowerCase(data)
         data = cleanCreditcard(data)
         data = cleanPin(data)
@@ -37,30 +37,20 @@ getData(endpoints)
         data = cleanEverythingElse(data)
         data = countedValues(data)
         data = mergeData(data)
-        console.log(data)
+
         return data
     })
-        .then(data => render(data))
-    
-    
+    .then(data => render(data));
 
-
-// getDataSet(endpoints[0])
-//     .then((data) => {
-//         // mergeDataTogether(data)
-//         data = filterData(data, selectedColumn)
-//         data = allDataToLowerCase(data)
-//         data = cleanCreditcard(data)
-//         data = cleanPin(data)
-//         data = cleanCash(data)
-//         data = cleanChip(data)
-//         data = cleanEverythingElse(data)
-//         data = countedValues(data)
-//         data = mergeData(data)
-
+// getData(endpoints)
+//     //  .then(data => returnToJSON(data))
+//     .then(data => {
+//         mergeDataTogether(data)
+//         console.log(data)
 //         return data
 //     })
-//     .then(data => render(data))
+
+
 
 /* 
     > in STAD de meest gebruikte betaalmogelijkheid tonen.
@@ -246,13 +236,43 @@ function mergeDataTogether(dataArray) {
         return payment
     })
 }
+/* 
+functie schrijven die de data filtert op amsterdam
+if locatie = amsterdam
+maak nieuwe array met alleen locatie ams
 
 
+function filterLoc(dataArray) {
+    let cleanArray = [];
 
+    dataArray.filter(item => {
+        if (item.includes('Amsterdam')) {
+            cleanArray.push(item);
+        }
+        else {
+            cleanArray.push(item);
+        }
+    })
+    return cleanCashArray;
+}
 
+    }
+}
 
+*/
+// function filterLoc(dataArray) {
+//     let cleanArray = [];
 
-
+//     dataArray.filter(item => {
+//         if (item.includes('Amsterdam')) {
+//             cleanArray.push(item);
+//         }
+//         else {
+//             cleanArray.push(item);
+//         }
+//     })
+//     return cleanArray;
+// }
 
 // --- EINDE CLEANEN DATA ---
 
@@ -285,14 +305,14 @@ const render = data => {
     const xScale = d3.scaleLinear()
         .domain([0, d3.max(data, xValue)])
         .range([innerWidth, 0]);
-        
-   // console.log(xScale.domain())
+
+    // console.log(xScale.domain())
 
     // scaleband bepaald de breedte van de bars
     const yScale = d3.scaleBand()
         .domain(data.map(yValue))
         .range([innerHeight, 0])
-        .padding(0.3);
+        .padding(0.2);
 
     // maakt een nieuwe groep aan
     const g = svg.append('g')
@@ -308,13 +328,21 @@ const render = data => {
     g.selectAll('rect').data(data)
         .enter().append('rect') // maakt de bars aan
         .style('fill', "rgb(102, 102, 255)") // geeft een andere kleur aan de bars
-        .attr('y', d => xScale(xValue(d))) // plaatsing in de grafiek (waar op de y-as)
+        .attr('y', d => xScale(xValue(d)) - 100)
+        // plaatsing in de grafiek (waar op de y-as)
         .attr('height', d => innerHeight - xScale(d.hoeveelheid))
         //   .attr('height', d => yScale(yValue(d))) // width van één bar
         .attr('width', yScale.bandwidth()) // height van één bar
         .attr('x', d => { return yScale(d.betaalmethode) })
+        .transition() // <---- Here is the transition
+        .duration(1000) // 2 seconds
+        .attr('y', d => xScale(xValue(d)))
+        .delay(function (d, i) {
+            return i * - 75
+                ;
+        })
+        .attr('x', d => { return yScale(d.betaalmethode) })
 
-};
-
-
+        .ease(d3.easeIn)
+}
 
