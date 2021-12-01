@@ -26,8 +26,6 @@ async function getDataSet(url) {
 
 getDataSet(endpoints[0])
     .then((data) => {
-        // mergeDataTogether(data)
-        // console.log(data)
         data = filterData(data, selectedColumn)
         data = allDataToLowerCase(data)
         data = cleanCreditcard(data)
@@ -42,22 +40,14 @@ getDataSet(endpoints[0])
     })
     .then(data => render(data));
 
-// getData(endpoints)
-//     //  .then(data => returnToJSON(data))
-//     .then(data => {
-//         mergeDataTogether(data)
-//         console.log(data)
-//         return data
-//     })
+
+getData(endpoints)
+.then((data => {
+    console.log(groupBy(data[0], 'areamanagerid' ))
+    
+}))
 
 
-
-/* 
-    > in STAD de meest gebruikte betaalmogelijkheid tonen.
-
-    Nieuwe promise function die twee promises maakt om de API data op te halen
-    Promise.all() om de datasets op te halen
-    */
 
 function getData(urls) {
     const datasets = urls.map(url => d3.json(url));
@@ -71,22 +61,8 @@ function filterData(dataArray, column) {
 
 };
 
-// functie die zoekt naar unieke waardes in een array
-function uniqueValues(dataArray) {
-    // een lege nieuwe array waarin de unieke waardes gestopt worden
-    let uniqueArray = [];
-    // 
-    dataArray.map(item => {
-        if (uniqueArray.indexOf(item) == -1) {
-            uniqueArray.push(item);
-        };
-    })
-    return uniqueArray;
-}
-
 // returns alle gegevens in kleine letters, dat is netter!
 function allDataToLowerCase(dataArray) {
-    // console.log('adtlc', dataArray)
     return dataArray.map(item => item.toLowerCase())
 }
 
@@ -236,43 +212,21 @@ function mergeDataTogether(dataArray) {
         return payment
     })
 }
-/* 
-functie schrijven die de data filtert op amsterdam
-if locatie = amsterdam
-maak nieuwe array met alleen locatie ams
-
-
-function filterLoc(dataArray) {
-    let cleanArray = [];
-
-    dataArray.filter(item => {
-        if (item.includes('Amsterdam')) {
-            cleanArray.push(item);
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
+function groupBy(objectArray, property) {
+    return objectArray.reduce(function(acc, obj) {
+        let key = obj[property]
+        if(!acc[key]) {
+            acc[key] = []
         }
-        else {
-            cleanArray.push(item);
-        }
-    })
-    return cleanCashArray;
+        acc[key].push(obj)
+        return acc
+    }, {})
 }
 
-    }
-}
+// wat is de meest gebruikte betaalmethode in Amsterdam?
+//filter alle data die de ams area code hebben eruit
 
-*/
-// function filterLoc(dataArray) {
-//     let cleanArray = [];
-
-//     dataArray.filter(item => {
-//         if (item.includes('Amsterdam')) {
-//             cleanArray.push(item);
-//         }
-//         else {
-//             cleanArray.push(item);
-//         }
-//     })
-//     return cleanArray;
-// }
 
 // --- EINDE CLEANEN DATA ---
 
