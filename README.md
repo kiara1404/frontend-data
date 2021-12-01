@@ -22,5 +22,8 @@ npm run build
 ```
 Bovenstaande command moet elke keer na een aanpassing in de code opnieuw gegeven worden, anders wordt krijg je niet de meest recente code in de browser.
 
+# **Rubric**
+![]()
+
 # **Licentie**
 Auteur: Kiara Broekhuizen [MIT License](https://github.com/kiara1404/frontend-data/blob/main/LICENSE)

@@ -15,8 +15,6 @@ const selectedColumn = 'paymentmethod';
 async function getDataSet(url) {
     try {
         const data = d3.json(url);
-        console.log(data)
-        console.log(typeof data)
         return await data
 
     } catch (err) {
@@ -25,10 +23,12 @@ async function getDataSet(url) {
     }
 
 }
-getDataSet(endpoints[0])
-    //    .then(response => returnToJSON(response))
-    .then((data) => {
-        data = filterData(data, selectedColumn)
+getData(endpoints)
+  //  .then(data => returnToJSON(data))
+    .then(data => {
+        mergeDataTogether(data)
+        console.log(data)
+        data = filterData(data[0], selectedColumn)
         data = allDataToLowerCase(data)
         data = cleanCreditcard(data)
         data = cleanPin(data)
@@ -40,42 +40,38 @@ getDataSet(endpoints[0])
         console.log(data)
         return data
     })
-    .then(data => render(data))
+        .then(data => render(data))
+    
+    
 
-// getData(endpoints)
-//     .then(response => returnToJSON(response))
+
+// getDataSet(endpoints[0])
 //     .then((data) => {
-//         data = filterData(data[0], selectedColumn)
+//         // mergeDataTogether(data)
+//         data = filterData(data, selectedColumn)
 //         data = allDataToLowerCase(data)
 //         data = cleanCreditcard(data)
 //         data = cleanPin(data)
+//         data = cleanCash(data)
+//         data = cleanChip(data)
 //         data = cleanEverythingElse(data)
 //         data = countedValues(data)
 //         data = mergeData(data)
+
 //         return data
 //     })
+//     .then(data => render(data))
 
+/* 
+    > in STAD de meest gebruikte betaalmogelijkheid tonen.
 
-// .then(data => filterData(data[0], selectedColumn))
-// .then(data => allDataToLowerCase(data))
-// .then(data => cleanCreditcard(data))
-// .then(data => cleanPin(data))
-// .then(data => cleanCash(data))
-// .then(data => cleanEverythingElse(data))
-// .then(data => console.log(countedValues(data)))
+    Nieuwe promise function die twee promises maakt om de API data op te halen
+    Promise.all() om de datasets op te halen
+    */
 
-
-
-//returns de urls met een promise.all, zorgt ervoor dat het wordt uitgevoerd wanneer alle urls zijn opgehaald
-// Hulp gekregen van Roeland van Stee en Vincent van Leeuwen
-function getData(url) {
-    const datasets = url.map(url => fetch(url));
+function getData(urls) {
+    const datasets = urls.map(url => d3.json(url));
     return Promise.all(datasets);
-};
-
-// Zorgt ervoor dat de dataset een array wordt zodat je kan .map()
-function returnToJSON(response) {
-    return Promise.all(response.map(response => response.json()))
 };
 
 
@@ -236,6 +232,25 @@ function mergeData(dataArray) {
     return p
 }
 
+function mergeDataTogether(dataArray) {
+    // de datasets die we in elkaar gaan voegen
+    const payments = dataArray[0]; //
+    const areamanagers = dataArray[1];
+    // er wordt over de payments dataset geloopt en vergelijkt areamanagerid's met elkaar en wanneer
+    //deze overeen komen wordt de areamanager id van areamanagers in de payments dataset 'gezet'
+    const result = payments.map(payment => {
+        const areamanager = areamanagers.find(areamanager =>
+            payment.areamanagerid === areamanager.areamanagerid
+        );
+        payment.areamanager = areamanager;
+        return payment
+    })
+}
+
+
+
+
+
 
 
 
@@ -249,7 +264,7 @@ const svg = d3.select('body').append('svg');
 // Geef een width en een height mee aan de SVG
 svg
     .attr('width', 900)
-    .attr('height', 600)
+    .attr('height', 820)
 
 // sla de width en height op in een variabelen
 const width = svg.attr('width');
@@ -269,14 +284,15 @@ const render = data => {
     console.log("d3max", d3.max(data, xValue))
     const xScale = d3.scaleLinear()
         .domain([0, d3.max(data, xValue)])
-        .range([0, innerWidth]);
-    console.log(xScale.domain())
+        .range([innerWidth, 0]);
+        
+   // console.log(xScale.domain())
 
     // scaleband bepaald de breedte van de bars
     const yScale = d3.scaleBand()
         .domain(data.map(yValue))
-        .range([0, innerHeight])
-        .padding(0.1);
+        .range([innerHeight, 0])
+        .padding(0.3);
 
     // maakt een nieuwe groep aan
     const g = svg.append('g')
@@ -285,16 +301,18 @@ const render = data => {
         );
 
     // maakt nog een keer nieuwe groep aan met line en text
-    g.append('g').call(d3.axisLeft(yScale))
-    g.append('g').call(d3.axisBottom(xScale))
+    g.append('g').call((d3.axisLeft(xScale)).ticks(20));
+    g.append('g').call(d3.axisBottom(yScale))
         .attr('transform', `translate(0,${innerHeight})`);
 
     g.selectAll('rect').data(data)
         .enter().append('rect') // maakt de bars aan
         .style('fill', "rgb(102, 102, 255)") // geeft een andere kleur aan de bars
-        .attr('y', d => yScale(yValue(d))) // plaatsing in de grafiek (waar op de y-as)
-        .attr('width', d => xScale(xValue(d))) // width van één bar
-        .attr('height', yScale.bandwidth()); // height van één bar
+        .attr('y', d => xScale(xValue(d))) // plaatsing in de grafiek (waar op de y-as)
+        .attr('height', d => innerHeight - xScale(d.hoeveelheid))
+        //   .attr('height', d => yScale(yValue(d))) // width van één bar
+        .attr('width', yScale.bandwidth()) // height van één bar
+        .attr('x', d => { return yScale(d.betaalmethode) })
 
 };
 
