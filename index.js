@@ -279,6 +279,7 @@ function filterLoc(dataArray) {
 // --- BEGIN d3 ---
 
 const svg = d3.select('body').append('svg');
+const tooltip = d3.select("body").append("div").attr('class', 'toolTip');
 
 
 // Geef een width en een height mee aan de SVG
@@ -320,6 +321,8 @@ const render = data => {
             `translate(${margin.left}, ${margin.top})`
         );
 
+
+
     // maakt nog een keer nieuwe groep aan met line en text
     g.append('g').call((d3.axisLeft(xScale)).ticks(20));
     g.append('g').call(d3.axisBottom(yScale))
@@ -334,15 +337,34 @@ const render = data => {
         //   .attr('height', d => yScale(yValue(d))) // width van één bar
         .attr('width', yScale.bandwidth()) // height van één bar
         .attr('x', d => { return yScale(d.betaalmethode) })
+        .on('mousemove', function (event, d) {
+            tooltip
+                .style('display', 'inline-block')
+                .style('left', event.pageX - 50 + 'px')
+                .style('top', event.pageY - 70 + 'px')
+            console.log(d.hoeveelheid)
+                .html(function (d) { '<p> hoeveelheid:' + d.hoeveelheid + '</p>' })
+        })
+        .on('mouseout', function (d) {
+            tooltip.style('display', 'none')
+        })
         .transition() // <---- Here is the transition
         .duration(1000) // 2 seconds
         .attr('y', d => xScale(xValue(d)))
         .delay(function (d, i) {
-            return i * - 75
+            return i * - 70
                 ;
         })
         .attr('x', d => { return yScale(d.betaalmethode) })
+        .ease(d3.easeExpIn)
 
-        .ease(d3.easeIn)
+
+
+
+
+
+
+
 }
+
 
