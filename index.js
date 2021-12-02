@@ -44,8 +44,14 @@ getDataSet(endpoints[0])
 getData(endpoints)
 .then((data => {
     console.log(groupBy(data[0], 'areamanagerid' ))
-    
+    return data
 }))
+.then((data => {
+    console.log(groupBy(data[0], 'paymentmethod'))
+} ))
+// hoe nu verder als ik alleen amsterdam eruit wil halen?
+    
+
 
 
 
@@ -292,14 +298,15 @@ const render = data => {
         .attr('width', yScale.bandwidth()) // height van één bar
         .attr('x', d => { return yScale(d.betaalmethode) })
         .on('mousemove', function (event, d) {
+            console.log(d.hoeveelheid)
             tooltip
                 .style('display', 'inline-block')
                 .style('left', event.pageX - 50 + 'px')
-                .style('top', event.pageY - 70 + 'px')
-            console.log(d.hoeveelheid)
-                .html(function (d) { '<p> hoeveelheid:' + d.hoeveelheid + '</p>' })
+                .style('top', event.pageY - 170 + 'px')
+                .html('<p> hoeveelheid:' + d.hoeveelheid + '</p>' )
         })
         .on('mouseout', function (d) {
+            console.log('out')
             tooltip.style('display', 'none')
         })
         .transition() // <---- Here is the transition
@@ -311,12 +318,6 @@ const render = data => {
         })
         .attr('x', d => { return yScale(d.betaalmethode) })
         .ease(d3.easeExpIn)
-
-
-
-
-
-
 
 
 }
