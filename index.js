@@ -12,9 +12,38 @@ const endpoints = [
 let selectedColumn = 'paymentmethod';
 
 // --- BEGIN CLEANEN DATA ---
+
+function x(areacode) {
+    getDataSet(endpoints[0])
+        .then((data) => {
+           if(areacode){ data = data.filter(stad => stad.areamanagerid == areacode)}
+            console.log(data)
+            data = filterData(data, selectedColumn)
+            data = allDataToLowerCase(data)
+            data = cleanCreditcard(data)
+            data = cleanPin(data)
+            data = cleanCash(data)
+            data = cleanChip(data)
+            data = cleanEverythingElse(data)
+            data = countedValues(data)
+            data = mergeData(data)
+            return data
+        })
+        .then(data => {
+            render(data)
+        })
+}
+
+x('');
+
+
+
+
 async function getDataSet(url) {
+
     try {
         const data = d3.json(url);
+        console.log(data)
         return await data
 
     } catch (err) {
@@ -23,37 +52,6 @@ async function getDataSet(url) {
     }
 
 }
-
-getDataSet(endpoints[0])
-    .then((data) => {
-        data = filterData(data, selectedColumn)
-        data = allDataToLowerCase(data)
-        data = cleanCreditcard(data)
-        data = cleanPin(data)
-        data = cleanCash(data)
-        data = cleanChip(data)
-        data = cleanEverythingElse(data)
-        data = countedValues(data)
-        data = mergeData(data)
-
-        return data
-    })
-    .then(data => render(data));
-
-
-getData(endpoints)
-.then((data => {
-    console.log(groupBy(data[0], 'areamanagerid' ))
-    return data
-}))
-.then((data => {
-    console.log(groupBy(data[0], 'paymentmethod'))
-} ))
-// hoe nu verder als ik alleen amsterdam eruit wil halen?
-    
-
-
-
 
 function getData(urls) {
     const datasets = urls.map(url => d3.json(url));
@@ -218,21 +216,6 @@ function mergeDataTogether(dataArray) {
         return payment
     })
 }
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
-function groupBy(objectArray, property) {
-    return objectArray.reduce(function(acc, obj) {
-        let key = obj[property]
-        if(!acc[key]) {
-            acc[key] = []
-        }
-        acc[key].push(obj)
-        return acc
-    }, {})
-}
-
-// wat is de meest gebruikte betaalmethode in Amsterdam?
-//filter alle data die de ams area code hebben eruit
-
 
 // --- EINDE CLEANEN DATA ---
 
@@ -262,7 +245,6 @@ const render = data => {
     const innerHeight = height - margin.top - margin.bottom;
 
     // bepaald de grootte van de x-as en de stappen ertussen
-    console.log("d3max", d3.max(data, xValue))
     const xScale = d3.scaleLinear()
         .domain([0, d3.max(data, xValue)])
         .range([innerWidth, 0]);
@@ -298,12 +280,11 @@ const render = data => {
         .attr('width', yScale.bandwidth()) // height van één bar
         .attr('x', d => { return yScale(d.betaalmethode) })
         .on('mousemove', function (event, d) {
-            console.log(d.hoeveelheid)
             tooltip
                 .style('display', 'inline-block')
                 .style('left', event.pageX - 50 + 'px')
-                .style('top', event.pageY - 170 + 'px')
-                .html('<p> hoeveelheid:' + d.hoeveelheid + '</p>' )
+                .style('top', event.pageY - 120 + 'px')
+                .html('<p> hoeveelheid:' + d.hoeveelheid + '</p>')
         })
         .on('mouseout', function (d) {
             console.log('out')
