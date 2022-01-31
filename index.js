@@ -16,7 +16,7 @@ let selectedColumn = 'paymentmethod';
 function x(areacode) {
     getDataSet(endpoints[0])
         .then((data) => {
-           if(areacode){ data = data.filter(stad => stad.areamanagerid == areacode)}
+            if (areacode) { data = data.filter(stad => stad.areamanagerid == areacode) }
             console.log(data)
             data = filterData(data, selectedColumn)
             data = allDataToLowerCase(data)
@@ -270,7 +270,9 @@ const render = data => {
     g.append('g').call(d3.axisBottom(yScale))
         .attr('transform', `translate(0,${innerHeight})`);
 
-    g.selectAll('rect').data(data)
+    let bars = g.selectAll('rect').data(data);
+
+    bars
         .enter().append('rect') // maakt de bars aan
         .style('fill', "rgb(102, 102, 255)") // geeft een andere kleur aan de bars
         .attr('y', d => xScale(xValue(d)) - 100)
@@ -279,6 +281,7 @@ const render = data => {
         //   .attr('height', d => yScale(yValue(d))) // width van één bar
         .attr('width', yScale.bandwidth()) // height van één bar
         .attr('x', d => { return yScale(d.betaalmethode) })
+        .attr('class', 'bar')
         .on('mousemove', function (event, d) {
             tooltip
                 .style('display', 'inline-block')
@@ -298,9 +301,30 @@ const render = data => {
                 ;
         })
         .attr('x', d => { return yScale(d.betaalmethode) })
-        .ease(d3.easeExpIn)
+        .ease(d3.easeExpIn);
+
+    console.log(bars);
+  
+
+
+
+    // button om te switchen van dataset
+    let button = d3.select('body').append('button')
+        .text('change data')
+        .on('click', function () {
+            d3.selectAll('g').remove()
+            x('363')
+        })
+
+    
+        button.exit()
+
+    // if (x('363')) {
+    //     g
+
+
+    //     //  g.selectAll('rect').enter().append('rect')
+    // }
 
 
 }
-
-
