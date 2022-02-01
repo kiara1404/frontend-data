@@ -5,7 +5,7 @@ Deze repository is gemaakt voor het tweede vak van de Tech Track  van het themas
 ### Concept 📋
 De opdracht was om een externe API op te halen en een datavisualisatie te maken met behulp van d3.js. Ik heb data van het RDW gebruikt om te kijken wat de betaalmogelijkheden voor parkeren door heel Nederland zijn. 
 
-[screenshot](https://github.com/kiara1404/frontend-data/blob/main/screencap.png?raw=true)
+![screenshot](https://github.com/kiara1404/frontend-data/blob/main/screencap.png?raw=true)
 
 ### **Installatie** ⚙️
 Open je terminal en clone de link van mijn repo:
