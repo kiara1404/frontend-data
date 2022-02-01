@@ -13,7 +13,7 @@ import {
 import { getDataSet } from "./modules/getData.js"
 
 
-// Alle onderstaande code is gemaakt met behulp van de live coding van Laurens -> 'Live coding API' van 27-10-2020
+// onderstaande code is gemaakt met behulp van de live coding van Laurens -> 'Live coding API' van 27-10-2020
 
 // Fetching data van RDW
 //link naar de datasets
@@ -27,6 +27,7 @@ let selectedColumn = 'paymentmethod';
 
 // --- BEGIN CLEANEN DATA ---
 
+// Vincent heeft mij geholpen met functie x
 function x(areacode) {
     getDataSet(endpoints[0])
         .then((data) => {
